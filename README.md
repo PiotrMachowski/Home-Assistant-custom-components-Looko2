@@ -65,7 +65,7 @@ sensor:
 
 ## Instalation
 
-Download [*sensor.py*](https://github.com/PiotrMachowski/Home-Assistant-custom-components-Looko2/raw/master/sensor.py) and [*manifest.json*](https://github.com/PiotrMachowski/Home-Assistant-custom-components-Looko2/raw/master/manifest.json) to `config/custom_compoments/looko2` folder:
+Download [*sensor.py*](https://github.com/PiotrMachowski/Home-Assistant-custom-components-Looko2/raw/master/sensor.py) and [*manifest.json*](https://github.com/PiotrMachowski/Home-Assistant-custom-components-Looko2/raw/master/manifest.json) to `config/custom_compoments/looko2` directory:
 ```bash
 mkdir -p custom_compoments/looko2
 cd custom_compoments/looko2
