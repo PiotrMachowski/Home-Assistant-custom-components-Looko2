@@ -77,4 +77,4 @@ wget https://github.com/PiotrMachowski/Home-Assistant-custom-components-Looko2/r
 
 * **How to get API key?**
   
-  To get API key follow steps available at [*official project page*](https://burze.dzis.net/?page=api_interfejs).
+  To get API key follow steps available at [*official project page*](https://looko2web.nazwa.pl/aktualnosci/api/).
