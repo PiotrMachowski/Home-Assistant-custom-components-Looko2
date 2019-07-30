@@ -1,6 +1,6 @@
 # LookO2 sensor
 
-This sensor uses official API to get air quality data [*LookO2*](https://looko2.com/).
+This sensor uses official API to get air quality data from [*LookO2*](https://looko2.com/).
 
 ## Configuration options
 
