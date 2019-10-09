@@ -80,3 +80,5 @@ wget https://github.com/PiotrMachowski/Home-Assistant-custom-components-Looko2/r
 * **How to get API key?**
   
   To get API key follow steps available at [*official project page*](https://looko2web.nazwa.pl/aktualnosci/api/).
+
+<a href="https://www.buymeacoffee.com/PiotrMachowski" target="_blank"><img src="https://bmc-cdn.nyc3.digitaloceanspaces.com/BMC-button-images/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;" ></a>
