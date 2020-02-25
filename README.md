@@ -13,6 +13,7 @@ This sensor uses official API to get air quality data from [*LookO2*](https://lo
 | `api_key` | `string` | `True` | - | API key for Look02 |
 | `station_id` | `string` | `True` | - | ID of monitored station |
 | `monitored_conditions` | `list` | `True` | - | List of conditions to monitor |
+| `scan_interval` | `time period` | `False` | `00:20:00` | Interval between sensor updates |
 
 ### Possible monitored conditions
 
@@ -64,6 +65,10 @@ sensor:
       - 'PM25'
       - 'PreviousIJP'
       - 'Temperature'
+    scan_interval:
+      hours: 1
+      minutes: 2
+      seconds: 3
 ```
 
 ## Installation
