@@ -3,6 +3,6 @@
   "name": "LookO2",
   "documentation": "https://github.com/PiotrMachowski/Home-Assistant-custom-components-Looko2",
   "dependencies": [],
-  "codeowners": ["PiotrMachowski"],
+  "codeowners": ["@PiotrMachowski"],
   "requirements": ["requests"]
 }
