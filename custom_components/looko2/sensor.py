@@ -68,7 +68,7 @@ class LookO2Sensor(Entity):
         self._client_name = name
         self._type = sensor_type
         self._updater = updater
-        self._data = None
+        self._name = SENSOR_TYPES[sensor_type][0]
         self._state = None
         self._unit_of_measurement = SENSOR_TYPES[sensor_type][1]
 
@@ -81,6 +81,16 @@ class LookO2Sensor(Entity):
         if self._updater.data is not None:
             self._state = self._updater.data[self._type]
         return self._state
+
+    @property
+    def device_state_attributes(self):
+        output = dict()
+        if self._updater.data is not None:
+            for sensor_type in SENSOR_TYPES:
+                output[SENSOR_TYPES[sensor_type][0]] = self._updater.data[sensor_type]
+                if SENSOR_TYPES[sensor_type][1] is not None:
+                    output[SENSOR_TYPES[sensor_type][0]] = output[SENSOR_TYPES[sensor_type][0]] + ' ' + SENSOR_TYPES[sensor_type][1]
+        return output
 
     @property
     def unit_of_measurement(self):
