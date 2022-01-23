@@ -83,7 +83,7 @@ class LookO2Sensor(Entity):
         return self._state
 
     @property
-    def device_state_attributes(self):
+    def extra_state_attributes(self):
         output = dict()
         if self._updater.data is not None:
             for sensor_type in SENSOR_TYPES:
