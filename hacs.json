@@ -1,5 +1,8 @@
 {
   "name": "Looko2 sensor",
   "domains": ["sensor"],
-  "country": "PL"
+  "country": "PL",
+  "render_readme": true,
+  "zip_release": true,
+  "filename": "looko2.zip"
 }
