@@ -1,14 +1,14 @@
-from datetime import timedelta
 import logging
-import requests
+from datetime import timedelta
 
-import voluptuous as vol
-
-from homeassistant.util import Throttle
-from homeassistant.components.sensor import PLATFORM_SCHEMA
-from homeassistant.const import (CONF_MONITORED_CONDITIONS, CONF_NAME, TEMP_CELSIUS, CONF_API_KEY, CONF_SCAN_INTERVAL)
 import homeassistant.helpers.config_validation as cv
+import requests
+import voluptuous as vol
+from homeassistant.components.sensor import PLATFORM_SCHEMA
+from homeassistant.const import (CONF_MONITORED_CONDITIONS, CONF_NAME, CONF_API_KEY, CONF_SCAN_INTERVAL,
+                                 UnitOfTemperature, CONCENTRATION_MICROGRAMS_PER_CUBIC_METER)
 from homeassistant.helpers.entity import Entity
+from homeassistant.util import Throttle
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -18,12 +18,12 @@ DEFAULT_NAME = 'LookO2'
 DEFAULT_SCAN_INTERVAL = timedelta(minutes=20)
 
 SENSOR_TYPES = {
-    'AverageHCHO': ['Średni formaldehyd', 'µg/m³'],
-    'AveragePM1': ['Średnie PM1', 'µg/m³'],
-    'AveragePM10': ['Średnie PM10', 'µg/m³'],
-    'AveragePM25': ['Średnie PM2.5', 'µg/m³'],
+    'AverageHCHO': ['Średni formaldehyd', CONCENTRATION_MICROGRAMS_PER_CUBIC_METER],
+    'AveragePM1': ['Średnie PM1', CONCENTRATION_MICROGRAMS_PER_CUBIC_METER],
+    'AveragePM10': ['Średnie PM10', CONCENTRATION_MICROGRAMS_PER_CUBIC_METER],
+    'AveragePM25': ['Średnie PM2.5', CONCENTRATION_MICROGRAMS_PER_CUBIC_METER],
     'Color': ['Kolor', None],
-    'HCHO': ['Formaldehyd', 'µg/m³'],
+    'HCHO': ['Formaldehyd', CONCENTRATION_MICROGRAMS_PER_CUBIC_METER],
     'Humidity': ['Wilgotność', '%'],
     'IJP': ['IJP', ' '],
     'IJPDescription': ['IJP Opis', None],
@@ -31,11 +31,11 @@ SENSOR_TYPES = {
     'IJPString': ['IJP Nazwa', None],
     'IJPStringEN': ['IJP Nazwa EN', None],
     'Indoor': ['Wewnętrzny', None],
-    'PM1': ['PM1', 'µg/m³'],
-    'PM10': ['PM10', 'µg/m³'],
-    'PM25': ['PM2.5', 'µg/m³'],
+    'PM1': ['PM1', CONCENTRATION_MICROGRAMS_PER_CUBIC_METER],
+    'PM10': ['PM10', CONCENTRATION_MICROGRAMS_PER_CUBIC_METER],
+    'PM25': ['PM2.5', CONCENTRATION_MICROGRAMS_PER_CUBIC_METER],
     'PreviousIJP': ['Poprzednie IJP', ' '],
-    'Temperature': ['Temperatura', TEMP_CELSIUS]
+    'Temperature': ['Temperatura', UnitOfTemperature.CELSIUS]
 }
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
@@ -89,7 +89,8 @@ class LookO2Sensor(Entity):
             for sensor_type in SENSOR_TYPES:
                 output[SENSOR_TYPES[sensor_type][0]] = self._updater.data[sensor_type]
                 if SENSOR_TYPES[sensor_type][1] is not None:
-                    output[SENSOR_TYPES[sensor_type][0]] = output[SENSOR_TYPES[sensor_type][0]] + ' ' + SENSOR_TYPES[sensor_type][1]
+                    output[SENSOR_TYPES[sensor_type][0]] = output[SENSOR_TYPES[sensor_type][0]] + ' ' + \
+                                                           SENSOR_TYPES[sensor_type][1]
         return output
 
     @property
