@@ -108,7 +108,7 @@ rm looko2.zip
 
 * **How to get API key?**
   
-  To get API key follow steps available at [*official project page*](https://looko2web.nazwa.pl/aktualnosci/api/).
+  To get API key follow steps available at [*official project page*](https://looko2.pl/aktualnosci/api/).
 
 
 <!-- piotrmachowski_support_links_start -->
