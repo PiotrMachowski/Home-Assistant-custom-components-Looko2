@@ -1,11 +1,15 @@
 {
   "domain": "looko2",
   "name": "LookO2",
-  "documentation": "https://github.com/PiotrMachowski/Home-Assistant-custom-components-Looko2",
-  "issue_tracker": "https://github.com/PiotrMachowski/Home-Assistant-custom-components-Looko2/issues",
+  "codeowners": [
+    "@PiotrMachowski"
+  ],
   "dependencies": [],
-  "codeowners": ["@PiotrMachowski"],
-  "requirements": ["requests"],
-  "version": "v1.0.3",
-  "iot_class": "cloud_polling"
+  "documentation": "https://github.com/PiotrMachowski/Home-Assistant-custom-components-Looko2",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/PiotrMachowski/Home-Assistant-custom-components-Looko2/issues",
+  "requirements": [
+    "requests"
+  ],
+  "version": "v0.0.0"
 }
