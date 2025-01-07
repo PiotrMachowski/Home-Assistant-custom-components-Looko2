@@ -1,115 +1,196 @@
-import logging
-from datetime import timedelta
+from __future__ import annotations
 
-import homeassistant.helpers.config_validation as cv
-import requests
-import voluptuous as vol
-from homeassistant.components.sensor import PLATFORM_SCHEMA
-from homeassistant.const import (CONF_MONITORED_CONDITIONS, CONF_NAME, CONF_API_KEY, CONF_SCAN_INTERVAL,
-                                 UnitOfTemperature, CONCENTRATION_MICROGRAMS_PER_CUBIC_METER)
-from homeassistant.helpers.entity import Entity
-from homeassistant.util import Throttle
+import logging
+from collections.abc import Callable
+from dataclasses import dataclass
+
+from homeassistant.components.sensor import (
+    SensorDeviceClass,
+    SensorEntity,
+    SensorEntityDescription,
+    SensorStateClass,
+)
+from homeassistant.const import (
+    UnitOfTemperature,
+    CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
+    PERCENTAGE,
+    CONCENTRATION_MILLIGRAMS_PER_CUBIC_METER,
+    EntityCategory
+)
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.typing import StateType
+
+from . import LookO2ConfigEntry
+from .connector.model import LookO2DeviceData
+from .const import CONF_DEVICE_IDS
+from .coordinator import LookO2DataUpdateCoordinator
+from .entity import LookO2Entity
 
 _LOGGER = logging.getLogger(__name__)
 
-CONF_STATION_ID = 'station_id'
 
-DEFAULT_NAME = 'LookO2'
-DEFAULT_SCAN_INTERVAL = timedelta(minutes=20)
-
-SENSOR_TYPES = {
-    'AverageHCHO': ['Średni formaldehyd', CONCENTRATION_MICROGRAMS_PER_CUBIC_METER],
-    'AveragePM1': ['Średnie PM1', CONCENTRATION_MICROGRAMS_PER_CUBIC_METER],
-    'AveragePM10': ['Średnie PM10', CONCENTRATION_MICROGRAMS_PER_CUBIC_METER],
-    'AveragePM25': ['Średnie PM2.5', CONCENTRATION_MICROGRAMS_PER_CUBIC_METER],
-    'Color': ['Kolor', None],
-    'HCHO': ['Formaldehyd', CONCENTRATION_MICROGRAMS_PER_CUBIC_METER],
-    'Humidity': ['Wilgotność', '%'],
-    'IJP': ['IJP', ' '],
-    'IJPDescription': ['IJP Opis', None],
-    'IJPDescriptionEN': ['IJP Opis EN', None],
-    'IJPString': ['IJP Nazwa', None],
-    'IJPStringEN': ['IJP Nazwa EN', None],
-    'Indoor': ['Wewnętrzny', None],
-    'PM1': ['PM1', CONCENTRATION_MICROGRAMS_PER_CUBIC_METER],
-    'PM10': ['PM10', CONCENTRATION_MICROGRAMS_PER_CUBIC_METER],
-    'PM25': ['PM2.5', CONCENTRATION_MICROGRAMS_PER_CUBIC_METER],
-    'PreviousIJP': ['Poprzednie IJP', ' '],
-    'Temperature': ['Temperatura', UnitOfTemperature.CELSIUS]
-}
-
-PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
-    vol.Required(CONF_STATION_ID): cv.string,
-    vol.Required(CONF_API_KEY): cv.string,
-    vol.Optional(CONF_MONITORED_CONDITIONS, default=[]):
-        vol.All(cv.ensure_list, [vol.In(SENSOR_TYPES)]),
-    vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
-    vol.Optional(CONF_SCAN_INTERVAL, default=DEFAULT_SCAN_INTERVAL): cv.time_period
-})
+@dataclass(frozen=True, kw_only=True)
+class LookO2SensorEntityDescription(SensorEntityDescription):
+    value_fn: Callable[[LookO2DeviceData], StateType]
 
 
-def setup_platform(hass, config, add_entities, discovery_info=None):
-    name = config.get(CONF_NAME)
-    token = config.get(CONF_API_KEY)
-    station_id = config.get(CONF_STATION_ID)
-    scan_interval = config.get(CONF_SCAN_INTERVAL)
-    updater = LookO2Updater(station_id, token, scan_interval)
-    updater.update()
-    if updater.data is None:
-        raise Exception('Invalid configuration for LookO2 platform')
-    dev = []
-    for variable in config[CONF_MONITORED_CONDITIONS]:
-        dev.append(LookO2Sensor(name, variable, updater))
-    add_entities(dev, True)
+SENSOR_TYPES: tuple[LookO2SensorEntityDescription, ...] = (
+    LookO2SensorEntityDescription(
+        key="pm1",
+        translation_key="pm1",
+        native_unit_of_measurement=CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
+        device_class=SensorDeviceClass.PM1,
+        suggested_display_precision=0,
+        value_fn=lambda data: data.pm1,
+    ),
+    LookO2SensorEntityDescription(
+        key="pm25",
+        translation_key="pm25",
+        native_unit_of_measurement=CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
+        device_class=SensorDeviceClass.PM25,
+        suggested_display_precision=0,
+        value_fn=lambda data: data.pm25,
+    ),
+    LookO2SensorEntityDescription(
+        key="pm10",
+        translation_key="pm10",
+        native_unit_of_measurement=CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
+        device_class=SensorDeviceClass.PM10,
+        suggested_display_precision=0,
+        value_fn=lambda data: data.pm10,
+    ),
+    LookO2SensorEntityDescription(
+        key="hcho",
+        translation_key="hcho",
+        native_unit_of_measurement=CONCENTRATION_MILLIGRAMS_PER_CUBIC_METER,
+        suggested_display_precision=0,
+        value_fn=lambda data: data.hcho,
+    ),
+    LookO2SensorEntityDescription(
+        key="temperature",
+        translation_key="temperature",
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        device_class=SensorDeviceClass.TEMPERATURE,
+        state_class=SensorStateClass.MEASUREMENT,
+        suggested_display_precision=1,
+        value_fn=lambda data: data.temperature,
+    ),
+    LookO2SensorEntityDescription(
+        key="humidity",
+        translation_key="humidity",
+        native_unit_of_measurement=PERCENTAGE,
+        device_class=SensorDeviceClass.HUMIDITY,
+        state_class=SensorStateClass.MEASUREMENT,
+        suggested_display_precision=0,
+        value_fn=lambda data: data.humidity,
+    ),
+    LookO2SensorEntityDescription(
+        key="aqi",
+        translation_key="aqi",
+        device_class=SensorDeviceClass.AQI,
+        state_class=SensorStateClass.MEASUREMENT,
+        suggested_display_precision=0,
+        value_fn=lambda data: data.aqi,
+    ),
+    LookO2SensorEntityDescription(
+        key="aqi_index",
+        translation_key="aqi_index",
+        device_class=SensorDeviceClass.ENUM,
+        options=["hazardous", "bad", "satisfactory", "moderate", "good", "very_good"],
+        value_fn=lambda data: data.aqi_string_en.lower().replace(" ", "_"),
+    ),
+    LookO2SensorEntityDescription(
+        key="aqi_index_description",
+        translation_key="aqi_index_description",
+        device_class=SensorDeviceClass.ENUM,
+        options=["hazardous", "bad", "satisfactory", "moderate", "good", "very_good"],
+        entity_registry_enabled_default=False,
+        value_fn=lambda data: data.aqi_string_en.lower().replace(" ", "_"),
+    ),
+
+    LookO2SensorEntityDescription(
+        key="pm1_average",
+        translation_key="pm1_average",
+        native_unit_of_measurement=CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
+        device_class=SensorDeviceClass.PM1,
+        suggested_display_precision=0,
+        entity_registry_enabled_default=False,
+        value_fn=lambda data: data.average_pm1,
+    ),
+    LookO2SensorEntityDescription(
+        key="pm25_average",
+        translation_key="pm25_average",
+        native_unit_of_measurement=CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
+        device_class=SensorDeviceClass.PM25,
+        suggested_display_precision=0,
+        entity_registry_enabled_default=False,
+        value_fn=lambda data: data.average_pm25,
+    ),
+    LookO2SensorEntityDescription(
+        key="pm10_average",
+        translation_key="pm10_average",
+        native_unit_of_measurement=CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
+        device_class=SensorDeviceClass.PM10,
+        suggested_display_precision=0,
+        entity_registry_enabled_default=False,
+        value_fn=lambda data: data.average_pm10,
+    ),
+    LookO2SensorEntityDescription(
+        key="hcho_average",
+        translation_key="hcho_average",
+        native_unit_of_measurement=CONCENTRATION_MILLIGRAMS_PER_CUBIC_METER,
+        suggested_display_precision=0,
+        entity_registry_enabled_default=False,
+        value_fn=lambda data: data.average_hcho,
+    ),
+    LookO2SensorEntityDescription(
+        key="color",
+        translation_key="color",
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
+        value_fn=lambda data: data.color,
+    ),
+    LookO2SensorEntityDescription(
+        key="timestamp",
+        translation_key="timestamp",
+        entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
+        value_fn=lambda data: data.timestamp,
+    ),
+)
 
 
-class LookO2Sensor(Entity):
-    def __init__(self, name, sensor_type, updater):
-        self._client_name = name
-        self._type = sensor_type
-        self._updater = updater
-        self._name = SENSOR_TYPES[sensor_type][0]
-        self._state = None
-        self._unit_of_measurement = SENSOR_TYPES[sensor_type][1]
+async def async_setup_entry(
+        hass: HomeAssistant,
+        entry: LookO2ConfigEntry,
+        async_add_entities: AddEntitiesCallback,
+) -> None:
+    coordinator = entry.runtime_data.coordinator
+
+    async_add_entities(
+        LookO2SensorEntity(device_id, coordinator, description)
+        for description in SENSOR_TYPES
+        for device_id in entry.options[CONF_DEVICE_IDS]
+    )
+
+
+class LookO2SensorEntity(LookO2Entity, SensorEntity):
+    entity_description: LookO2SensorEntityDescription
+
+    def __init__(
+            self,
+            device_id: str,
+            coordinator: LookO2DataUpdateCoordinator,
+            description: LookO2SensorEntityDescription,
+    ) -> None:
+        """Initialize."""
+        super().__init__(device_id, coordinator)
+
+        self._attr_unique_id = f"looko2_sensor_{self._device_id}_{description.key}"
+        self.entity_description = description
 
     @property
-    def name(self):
-        return '{} {}'.format(self._client_name, self._type)
-
-    @property
-    def state(self):
-        if self._updater.data is not None:
-            self._state = self._updater.data[self._type]
-        return self._state
-
-    @property
-    def extra_state_attributes(self):
-        output = dict()
-        if self._updater.data is not None:
-            for sensor_type in SENSOR_TYPES:
-                output[SENSOR_TYPES[sensor_type][0]] = self._updater.data[sensor_type]
-                if SENSOR_TYPES[sensor_type][1] is not None:
-                    output[SENSOR_TYPES[sensor_type][0]] = output[SENSOR_TYPES[sensor_type][0]] + ' ' + \
-                                                           SENSOR_TYPES[sensor_type][1]
-        return output
-
-    @property
-    def unit_of_measurement(self):
-        return self._unit_of_measurement
-
-    def update(self):
-        self._updater.update()
-
-
-class LookO2Updater:
-    def __init__(self, station_id, token, scan_interval):
-        self._station_id = station_id
-        self._token = token
-        self.update = Throttle(scan_interval)(self._update)
-        self.data = None
-
-    def _update(self):
-        address = 'http://api.looko2.com/?method=GetLOOKO&id={}&token={}'.format(self._station_id, self._token)
-        request = requests.get(address)
-        if request.status_code == 200 and request.content.__len__() > 0:
-            self.data = request.json()
+    def native_value(self) -> StateType:
+        """Return the value reported by the sensor."""
+        return self.entity_description.value_fn(self.coordinator.data[self._device_id])

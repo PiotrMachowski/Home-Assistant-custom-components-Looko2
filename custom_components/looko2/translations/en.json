@@ -1,0 +1,105 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "description": "Please provide API token",
+        "data": {
+          "api_token": "API Token"
+        }
+      },
+      "device_ids": {
+        "description": "Please choose devices to configure",
+        "data": {
+          "device_id": "Devices"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect",
+      "unknown": "Unexpected error"
+    },
+    "abort": {
+      "single_instance_allowed": "Already configured. Only a single configuration possible.",
+      "cannot_connect": "Failed to connect"
+    }
+  },
+  "options": {
+    "step": {
+      "device_ids": {
+        "description": "Please choose devices to configure",
+        "data": {
+          "device_id": "Devices"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect",
+      "unknown": "Unexpected error"
+    }
+  },
+  "entity": {
+    "sensor": {
+      "pm1": {
+        "name": "PM1"
+      },
+      "pm25": {
+        "name": "PM2.5"
+      },
+      "pm10": {
+        "name": "PM10"
+      },
+      "hcho": {
+        "name": "Formaldehyde"
+      },
+      "temperature": {
+        "name": "Temperature"
+      },
+      "humidity": {
+        "name": "Humidity"
+      },
+      "aqi": {
+        "name": "AQI"
+      },
+      "aqi_index": {
+        "name": "AQI Text",
+        "state": {
+          "hazardous": "Hazardous",
+          "bad": "Bad",
+          "satisfactory": "Satisfactory",
+          "moderate": "Moderate",
+          "good": "Good",
+          "very_good": "Very Good"
+        }
+      },
+      "aqi_index_description": {
+        "name": "AQI Description",
+        "state": {
+          "hazardous": "The quality of air is dangerously wrong. Those at risk should be avoided to go outside. The others should limit the output to minimum.Outdoor activities are discouraged.",
+          "bad": "Air quality is bad. People at risk should avoid to go outside. Not recommended for outdoor activities.",
+          "satisfactory": "Air quality is average. The air pollution pose a threat for people at risk which may experience health effects. Other people should limit spending time outdoors, especially when they experience symptoms such as cough or sore throat.",
+          "moderate": "Air quality is acceptable. Air pollution can endanger people at risk. Conditions good for for outdoor activities.",
+          "good": "Air quality is still good. The air pollution pose minimal risk to exposed persons. Conditions very good for outdoor activities.",
+          "very_good": "The air quality is good. The air pollution pose no threat. The conditions ideal for outdoor activities."
+        }
+      },
+      "pm1_average": {
+        "name": "Average PM1"
+      },
+      "pm25_average": {
+        "name": "Average PM2.5"
+      },
+      "pm10_average": {
+        "name": "Average PM10"
+      },
+      "hcho_average": {
+        "name": "Average Formaldehyde"
+      },
+      "color": {
+        "name": "Color"
+      },
+      "timestamp": {
+        "name": "Last Visible"
+      }
+    }
+  }
+}
