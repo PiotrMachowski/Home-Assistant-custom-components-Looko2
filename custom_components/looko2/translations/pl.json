@@ -1,0 +1,105 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "description": "Podaj token API",
+        "data": {
+          "api_token": "Token"
+        }
+      },
+      "device_ids": {
+        "description": "Wybierz urządzenia do skonfigurowania",
+        "data": {
+          "device_ids": "Urządzenia"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Nie można nawiązać połączenia",
+      "unknown": "Nieoczekiwany błąd"
+    },
+    "abort": {
+      "single_instance_allowed": "Już skonfigurowano. Możliwa jest tylko jedna konfiguracja.",
+      "cannot_connect": "Błąd połączenia"
+    }
+  },
+  "options": {
+    "step": {
+      "device_ids": {
+        "description": "Wybierz urządzenia do skonfigurowania",
+        "data": {
+          "device_ids": "Urządzenia"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Nie można nawiązać połączenia",
+      "unknown": "Nieoczekiwany błąd"
+    }
+  },
+  "entity": {
+    "sensor": {
+      "pm1": {
+        "name": "PM1"
+      },
+      "pm25": {
+        "name": "PM2.5"
+      },
+      "pm10": {
+        "name": "PM10"
+      },
+      "hcho": {
+        "name": "Formaldehyd"
+      },
+      "temperature": {
+        "name": "Temperatura"
+      },
+      "humidity": {
+        "name": "Wilgotność"
+      },
+      "aqi": {
+        "name": "Indeks Jakości Powietrza"
+      },
+      "aqi_index": {
+        "name": "Indeks Jakości Powietrza Słownie",
+        "state": {
+          "hazardous": "Bardzo zły",
+          "bad": "Zły",
+          "satisfactory": "Dostateczny",
+          "moderate": "Umiarkowany",
+          "good": "Dobry",
+          "very_good": "Bardzo dobry"
+        }
+      },
+      "aqi_index_description": {
+        "name": "Indeks Jakości Powietrza Opis",
+        "state": {
+          "hazardous": "Jakość powietrza jest niebezpiecznie zła. Osoby narażone na ryzyko powinny bezwzględnie unikać wyjść na zewnątrz. Pozostali powinni ograniczyć wyjścia do minimum. Wszelkie aktywności na zewnątrz są odradzane.",
+          "bad": "Jakość powietrza jest zła. Osoby narażone na ryzyko powinny unikać wyjść na zewnątrz. Pozostali powinni je ograniczyć.Nie zalecane są aktywnośći na zewnątrz.",
+          "satisfactory": "Jakość powietrza jest średnia. Zanieczyszczenia powietrza stanowią zagrożenie dla osób narażonych na ryzyko które mogą odczuwać skutki zdrowotne. Pozostałe osoby powinny ograniczyć spędzanie czasu na zewnątrz, zwłaszcza gdy doświadczą takich symptomów jak kaszel lub podrażnione gardło.",
+          "moderate": "Jakość powietrza jest akceptowalna. Zanieczyszczenia powietrza mogą stanowić zagrożenie dla osób narażonych na ryzyko. Warunki dobre na aktywności na zewnątrz.",
+          "good": "Jakość powietrza jest wciąż dobra. Zanieczyszczenia powietrza stanowią minimalne zagrożenie dla osób narażonych na ryzyko. Warunki bardzo dobre na aktywności na zewnątrz.",
+          "very_good": "Jakość powietrza jest dobra. Zanieczyszczenia powietrza nie stanowią zagrożenia. Warunki idealne na aktywności na zewnątrz."
+        }
+      },
+      "pm1_average": {
+        "name": "Średnie PM1"
+      },
+      "pm25_average": {
+        "name": "Średnie PM2.5"
+      },
+      "pm10_average": {
+        "name": "Średnie PM10"
+      },
+      "hcho_average": {
+        "name": "Średni Formaldehyd"
+      },
+      "color": {
+        "name": "Kolor"
+      },
+      "timestamp": {
+        "name": "Ostatni Odczyt"
+      }
+    }
+  }
+}

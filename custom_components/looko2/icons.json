@@ -1,0 +1,24 @@
+{
+  "entity": {
+    "sensor": {
+      "aqi_index": {
+        "default": "mdi:air-filter"
+      },
+      "aqi_index_description": {
+        "default": "mdi:air-filter"
+      },
+      "hcho": {
+        "default": "mdi:molecule"
+      },
+      "hcho_average": {
+        "default": "mdi:molecule"
+      },
+      "color": {
+        "default": "mdi:palette"
+      },
+      "timestamp": {
+        "default": "mdi:clock"
+      }
+    }
+  }
+}
